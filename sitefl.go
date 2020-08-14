@@ -158,14 +158,13 @@ func compile() string {
 				cState = IMAGE
 			case '`':
 				cState = CODE
-			default:
-				if ch == '\n' {
-					if preserveNewlines {
-						output.WriteString("\n<br>\n")
-					}
-				} else {
-					output.WriteByte(ch)
+			case '\n':
+				fmt.Println("HELLO")
+				if preserveNewlines {
+					output.WriteString("\n<br>\n")
 				}
+			default:
+				output.WriteByte(ch)
 			}
 		// ----------------------------------------------------------------------------------------
 		case ESCAPEFORMATTING:
