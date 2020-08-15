@@ -185,6 +185,8 @@ func compile() string {
 						break
 					}
 				}
+				current--
+				peeked--
 				compiled.WriteString("<h" + strconv.Itoa(hNum) + ">")
 				pushState(heading)
 
@@ -394,6 +396,9 @@ func usage() {
 }
 
 func main() {
+	//source = "`code in here\nand here as well *bold*"
+	//output = compile()
+	//fmt.Println(output)
 	if len(os.Args) < 3 {
 		usage()
 		os.Exit(0)
