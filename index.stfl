@@ -1,10 +1,9 @@
-<!doctype HTML>
-<html>
-	<head>
-		<link rel="stylesheet" href="defaults/templateCSS.css">
-	</head>
-	<body>
-		<div class="content"><h1>SiTeFL</h1><h3>The <u>Si</u>mple <u>Te</u>xt <u>F</u>ormatting <u>L</u>anguage</h3>SiTeFL is a text formatting language like Markdown, with a <em>text-to-html</em> tool written from scratch in Go.<br><br><h3>Syntax:</h3><pre>
+#SiTeFL
+###The _Si_mple _Te_xt _F_ormatting _L_anguage
+SiTeFL is a text formatting language like Markdown, with a /text-to-html/ tool written from scratch in Go.
+
+###Syntax:
+`
 - Headings    :   # ... ######
 
 - Bold        :   *bold*
@@ -25,26 +24,36 @@
 
 - Escape      :   enclose text within curly braces
   Formatting
-</pre><br><br><h3>Usage:</h3><pre>
+`
+
+###Usage:
+`
 sitefl [-OPTIONS] [stylesheet, template] source destination
-</pre><br><br><h3>Options:</h3><pre>
+`
+
+###Options:
+`
 f : Prints this message
 n : Preserves new lines
 s : attach Stylesheet
 t : use template
-</pre><br><h3>Source:</h3><pre>
+`
+###Source:
+`
 filename : file to obtain input from
 'in' : get input from stdin
 	-> allows user to pipe output from another program into this program
 	-> grep -o "something" | sitefl in DESTINATION
-</pre>					<br><h3>Destination:</h3><pre>
+`					
+###Destination:
+`
 filename : file to send output to
 'out' : send output to stdout
 	-> allows the output fo this program to be piped into another program
 	-> sitefl SOURCE out | grep "something"
-</pre><br><h3>Example:</h3><pre>
+`
+###Example:
+`
 sitefl -nts defaults/templateHTML.html defaults/templateCSS.css index.stfl index.html
-</pre><br>( This is the actual command that I'm using to generate this page )<br>
-		</div>
-	</body>
-</html>
+`
+( This is the actual command that I'm using to generate this page )
