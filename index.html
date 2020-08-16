@@ -5,7 +5,7 @@
 	</head>
 	<body>
 		<div class="content"><h1>SiTeFL</h1><h3>The <u>Si</u>mple <u>Te</u>xt <u>F</u>ormatting <u>L</u>anguage</h3>SiTeFL is a text formatting language like Markdown, with a <em>text-to-html</em> tool written from scratch in Go.<br><br><h3>Syntax:</h3><pre>
-- Headings    :   # ... ######
+- Headings    :   # (1 -> 6) 
 
 - Bold        :   *bold*
 
@@ -13,18 +13,23 @@
 
 - Underline   :   _underline_
 
-- Code        :   enclose within back-tics
+- Code        :   `this is code`
 
-- Images      :   ![Alt-text](link to image)
+- Images      :   ![Alt-text::width::height](link to image)
 
-- Link        :   @[Display-text::width::height](link url)
+- Link        :   @[Display-text](link url)
 
 - NewLine     :   ;;
 
 - Horizontal  :   ---
 
-- Escape      :   enclose text within curly braces
-  Formatting
+- Escape
+  Formatting  :   { *not bold* will not appear as bold ! }
+  (BLOCK)
+
+- Escape
+  Single      :   \
+  Character
 </pre><br><br><h3>Usage:</h3><pre>
 sitefl [-OPTIONS] [stylesheet, template] source destination
 </pre><br><br><h3>Options:</h3><pre>
@@ -35,13 +40,13 @@ t : use template
 </pre><br><h3>Source:</h3><pre>
 filename : file to obtain input from
 'in' : get input from stdin
-	-> allows user to pipe output from another program into this program
-	-> grep -o "something" | sitefl in DESTINATION
+
+(enables : grep -o "something" | sitefl in DESTINATION )
 </pre>					<br><h3>Destination:</h3><pre>
 filename : file to send output to
 'out' : send output to stdout
-	-> allows the output fo this program to be piped into another program
-	-> sitefl SOURCE out | grep "something"
+
+(enables : sitefl SOURCE out | grep "something" )
 </pre><br><h3>Example:</h3><pre>
 sitefl -nts defaults/templateHTML.html defaults/templateCSS.css index.stfl index.html
 </pre><br>( This is the actual command that I'm using to generate this page )<br>

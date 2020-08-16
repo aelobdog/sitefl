@@ -52,6 +52,7 @@ const (
 
 // map of names to characters, for flexibility
 var blockChars = map[string]byte {
+	"esc" : '\\',
 	"escapeBegin" : '{',
 	"escapeEnd" : '}',
 	"bold" : '*',
@@ -112,11 +113,25 @@ func compile() string {
 	for ; current < len(source); next() {
 		ch = curr()
 		switch ch {
-			
+			case blockChars["esc"]:
+				next()
+				ch = curr()
+				compiled.WriteByte(ch)
+
 			case blockChars["escapeBegin"]:
 				next()
 				ch = curr()
 				for ch != blockChars["escapeEnd"] && current < len(source) {
+					if ch == blockChars["esc"] {
+						//fmt.Print(string(ch))
+						next()
+						ch = curr()	
+						//fmt.Println(string(ch))
+						//compiled.WriteByte(ch)
+						//next()
+						//ch = curr()
+						//fmt.Println(string(ch))
+					}
 					compiled.WriteByte(ch)
 					next()
 					ch = curr()
@@ -339,12 +354,20 @@ func compile() string {
 				ch = curr()
 				compiled.WriteString("<pre>")
 				for ch != blockChars["code"] && current < len(source) {
+					if ch == blockChars["esc"] {
+						next()
+						ch = curr()	
+						compiled.WriteByte(ch)
+						next()
+						ch = curr()
+					}
 					compiled.WriteByte(ch)
 					next()
+					ch = curr()
 					if ch == blockChars["code"] || current >= len(source) {
 						break
 					}
-					ch = curr()
+					//ch = curr()
 				}
 				compiled.WriteString("</pre>")
 

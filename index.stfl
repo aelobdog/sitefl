@@ -4,7 +4,7 @@ SiTeFL is a text formatting language like Markdown, with a /text-to-html/ tool w
 
 ###Syntax:
 `
-- Headings    :   # ... ######
+- Headings    :   # (1 -> 6) 
 
 - Bold        :   *bold*
 
@@ -12,18 +12,23 @@ SiTeFL is a text formatting language like Markdown, with a /text-to-html/ tool w
 
 - Underline   :   _underline_
 
-- Code        :   enclose within back-tics
+- Code        :   \`this is code\`
 
-- Images      :   ![Alt-text](link to image)
+- Images      :   ![Alt-text::width::height](link to image)
 
-- Link        :   @[Display-text::width::height](link url)
+- Link        :   @[Display-text](link url)
 
 - NewLine     :   ;;
 
 - Horizontal  :   ---
 
-- Escape      :   enclose text within curly braces
-  Formatting
+- Escape
+  Formatting  :   { *not bold* will not appear as bold ! }
+  (BLOCK)
+
+- Escape
+  Single      :   \\
+  Character
 `
 
 ###Usage:
@@ -42,15 +47,15 @@ t : use template
 `
 filename : file to obtain input from
 'in' : get input from stdin
-	-> allows user to pipe output from another program into this program
-	-> grep -o "something" | sitefl in DESTINATION
+
+(enables : grep -o "something" | sitefl in DESTINATION )
 `					
 ###Destination:
 `
 filename : file to send output to
 'out' : send output to stdout
-	-> allows the output fo this program to be piped into another program
-	-> sitefl SOURCE out | grep "something"
+
+(enables : sitefl SOURCE out | grep "something" )
 `
 ###Example:
 `
