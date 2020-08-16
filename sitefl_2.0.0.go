@@ -32,6 +32,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 )
 
 // States 
@@ -370,40 +371,41 @@ func writeToFile(content, filename string) {
 
 func usage() {
 	fmt.Println(`
-		USAGE:
-		------
-			sitefl [-n -h] source destination
+USAGE:
+------
+	sitefl [-OPTIONS] [stylesheet, template] source destination
 
-		OPTIONS:
-		--------
-			-f : Prints this message
-			-n : Preserves new lines
+OPTIONS:
+--------
+	f : Prints this message
+	n : Preserves new lines
+	s : attach Stylesheet
+	t : use template
 
-		SOURCE:
-		-------
-			filename : file to obtain input from
-			'in' : get input from stdin
-					-> allows user to pipe output from another program into this program
-					-> grep -o "something.*something" | sitefl in DESTINATION
+SOURCE:
+-------
+	filename : file to obtain input from
+	'in' : get input from stdin
+		-> allows user to pipe output from another program into this program
+		-> grep -o "something.*something" | sitefl in DESTINATION
 					
-		DESTINATION:
-		------------
-			filename : file to send output to
-			'out' : send output to stdout
-					-> allows the output fo this program to be piped into another program
-					-> sitefl SOURCE out | grep "<strong>.*</strong>"
+DESTINATION:
+------------
+	filename : file to send output to
+	'out' : send output to stdout
+		-> allows the output fo this program to be piped into another program
+		-> sitefl SOURCE out | grep "<strong>.*</strong>"
 	`)
 }
 
+
 func main() {
-	//source = "`code in here\nand here as well *bold*"
-	//output = compile()
-	//fmt.Println(output)
 	if len(os.Args) < 3 {
 		usage()
 		os.Exit(0)
 	}
-	optionGiven := false
+
+	/*
 	if os.Args[1] == "-n" {
 		preserveNewLines = true
 		optionGiven = true
@@ -420,9 +422,63 @@ func main() {
 			os.Exit(0)
 		}
 	}
+	*/
+
+	optionsGiven := false
+	html := 1
+	css := 1
 	src := 2
 	dst := 3
-	if !optionGiven {
+	var htmlBeg string
+	var htmlend string
+	
+	if os.Args[1][:1] == "-" {
+		optionsGiven = true
+		options := os.Args[1][1:]
+		for _, v := range options {
+			switch string(v) {
+			case "n":
+				preserveNewLines = true
+				if len(options) == 1 {
+					if len(os.Args) != 4 {
+						usage()
+						os.Exit(0)
+					}
+				}
+			case "h":
+				usage()
+				os.Exit(0)
+			case "t":
+				if len(os.Args) < 5 {
+					usage()
+					os.Exit(0)
+				}
+				if css == 2 {
+					html = 3
+				} else {
+					html = 2
+				}
+				src++
+				dst++
+			case "s":
+				if len(os.Args) < 5 {
+					usage()
+					os.Exit(0)
+				}
+				if html == 2 {
+					css = 3
+				} else {
+					css = 2
+				}
+				src++
+				dst++
+			default:
+				fmt.Printf("Unknown option : %q", v)
+			}
+		}
+	}
+
+	if !optionsGiven {
 		if len(os.Args) != 3 {
 			usage()
 			os.Exit(0)
@@ -447,7 +503,27 @@ func main() {
 		}
 		source = string(scode)
 	}
+	
 	output := compile()
+
+	if html != 1 {
+		templateHTML, err := ioutil.ReadFile(os.Args[html])
+		if err != nil {
+			fmt.Printf("Could not read file named %q", os.Args[html])
+			return
+		}
+		htmlData := string(templateHTML)
+		htmlBeg = htmlData[: strings.Index(htmlData, "ent\">")+5]
+		htmlend = htmlData[strings.Index(htmlData, "ent\">")+5 :]
+	}
+
+	if css != 1 {
+		htmlBeg = htmlBeg[:strings.Index(htmlBeg, "href=\"")+6] + os.Args[css] + htmlBeg[strings.Index(htmlBeg, "href=\"")+6:] 
+	}
+
+	if html != 1 {
+		output = htmlBeg + output + htmlend	
+	}
 
 	if os.Args[dst] == "out" {
 		fmt.Println(output)

@@ -29,23 +29,35 @@ SiTeFL (Simple Text Format Language) is a markdown like text formatting language
 
 USAGE:
 ------
-		sitefl [-n -h] source destination
+	sitefl [-OPTIONS] [stylesheet, template] source destination
 
-		OPTIONS:
-		--------
-			-f : Prints this message
-			-n : Preserves new lines
+OPTIONS:
+--------
+	f : Prints this message
+	n : Preserves new lines
+	s : attach Stylesheet
+	t : use template
 
-		SOURCE:
-		-------
-			filename : file to obtain input from
-			'in' : get input from stdin
-					-> allows user to pipe output from another program into this program
-					-> grep -o "something.*something" | sitefl in DESTINATION
+SOURCE:
+-------
+	filename : file to obtain input from
+	'in' : get input from stdin
+		-> allows user to pipe output from another program into this program
+		-> grep -o "something.*something" | sitefl in DESTINATION
 					
-		DESTINATION:
-		------------
-			filename : file to send output to
-			'out' : send output to stdout
-					-> allows the output fo this program to be piped into another program
-					-> sitefl SOURCE out | grep "<strong>.*</strong>"
+DESTINATION:
+------------
+	filename : file to send output to
+	'out' : send output to stdout
+		-> allows the output fo this program to be piped into another program
+		-> sitefl SOURCE out | grep "<strong>.*</strong>"
+
+EXAMPLE:
+--------
+( assuming you are in this directory )
+
+### if you want to use the template,
+
+	sitefl -ts defaults/templateHTML.html defaults/templateCSS.css testFile index.html
+	
+
