@@ -83,6 +83,8 @@ func remLastState() {
 
 var source string
 var output string
+var wrapBeg string
+var wrapEnd string
 var ch byte
 
 var current = 0
@@ -404,6 +406,7 @@ OPTIONS:
 	n : Preserves new lines
 	s : attach Stylesheet
 	t : use template
+	w : wrap the output in a div (id = 'unit')
 
 SOURCE:
 -------
@@ -495,6 +498,9 @@ func main() {
 				}
 				src++
 				dst++
+			case "w":
+				wrapBeg = "<div id='unit'>\n"
+				wrapEnd = "\n</div>"
 			default:
 				fmt.Printf("Unknown option : %q", v)
 			}
@@ -527,7 +533,7 @@ func main() {
 		source = string(scode)
 	}
 	
-	output := compile()
+	output := wrapBeg + compile() + wrapEnd
 
 	if html != 1 {
 		templateHTML, err := ioutil.ReadFile(os.Args[html])

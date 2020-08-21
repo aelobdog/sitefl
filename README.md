@@ -37,6 +37,7 @@ OPTIONS:
 	n : Preserves new lines
 	s : attach Stylesheet
 	t : use template
+	w : wrap the output within a div (id = 'unit')
 
 SOURCE:
 -------
