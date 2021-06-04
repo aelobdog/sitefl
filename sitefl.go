@@ -35,7 +35,7 @@ import (
 	"strings"
 )
 
-// States 
+// States
 const (
 	normal int = iota
 	escape
@@ -51,19 +51,19 @@ const (
 )
 
 // map of names to characters, for flexibility
-var blockChars = map[string]byte {
-	"esc" : '\\',
-	"escapeBegin" : '{',
-	"escapeEnd" : '}',
-	"bold" : '*',
-	"italics" : '/',
-	"underline" : '_',
-	"line" : '-',
-	"newline" : ';',
-	"link" : '@',
-	"image" : '!',
-	"code" : '`',
-	"heading" : '#',
+var blockChars = map[string]byte{
+	"esc":         '\\',
+	"escapeBegin": '{',
+	"escapeEnd":   '}',
+	"bold":        '*',
+	"italics":     '/',
+	"underline":   '_',
+	"line":        '-',
+	"newline":     ';',
+	"link":        '@',
+	"image":       '!',
+	"code":        '`',
+	"heading":     '#',
 }
 
 // Stack to keep track of the open states
@@ -78,7 +78,7 @@ func pushState(state int) {
 }
 
 func remLastState() {
-	openStates = openStates[0:len(openStates)-1]
+	openStates = openStates[0 : len(openStates)-1]
 }
 
 var source string
@@ -115,114 +115,114 @@ func compile() string {
 	for ; current < len(source); next() {
 		ch = curr()
 		switch ch {
-			case blockChars["esc"]:
-				next()
-				ch = curr()
+		case blockChars["esc"]:
+			next()
+			ch = curr()
+			compiled.WriteByte(ch)
+
+		case blockChars["escapeBegin"]:
+			next()
+			ch = curr()
+			for ch != blockChars["escapeEnd"] && current < len(source) {
+				if ch == blockChars["esc"] {
+					//fmt.Print(string(ch))
+					next()
+					ch = curr()
+					//fmt.Println(string(ch))
+					//compiled.WriteByte(ch)
+					//next()
+					//ch = curr()
+					//fmt.Println(string(ch))
+				}
 				compiled.WriteByte(ch)
-
-			case blockChars["escapeBegin"]:
 				next()
 				ch = curr()
-				for ch != blockChars["escapeEnd"] && current < len(source) {
-					if ch == blockChars["esc"] {
-						//fmt.Print(string(ch))
-						next()
-						ch = curr()	
-						//fmt.Println(string(ch))
-						//compiled.WriteByte(ch)
-						//next()
-						//ch = curr()
-						//fmt.Println(string(ch))
-					}
-					compiled.WriteByte(ch)
+				if ch == blockChars["escapeEnd"] {
+					break
+				}
+			}
+
+		case blockChars["bold"]:
+			if len(openStates) > 0 && lastState() == bold {
+				compiled.WriteString("</strong>")
+				remLastState()
+			} else {
+				compiled.WriteString("<strong>")
+				pushState(bold)
+			}
+
+		case blockChars["italics"]:
+			if len(openStates) > 0 && lastState() == italics {
+				compiled.WriteString("</em>")
+				remLastState()
+			} else {
+				compiled.WriteString("<em>")
+				pushState(italics)
+			}
+
+		case blockChars["underline"]:
+			if len(openStates) > 0 && lastState() == underline {
+				compiled.WriteString("</u>")
+				remLastState()
+			} else {
+				compiled.WriteString("<u>")
+				pushState(underline)
+			}
+
+		case blockChars["line"]:
+			if peek() == blockChars["line"] && peek2() == blockChars["line"] {
+				if len(openStates) == 0 {
+					next()
 					next()
 					ch = curr()
-					if ch == blockChars["escapeEnd"] {
-						break
-					}
-				}
-	
-			case blockChars["bold"]:
-				if len(openStates) > 0 && lastState() == bold {
-					compiled.WriteString("</strong>")
-					remLastState()
-				} else {
-					compiled.WriteString("<strong>")
-					pushState(bold)
-				}
-		
-			case blockChars["italics"]:
-				if len(openStates) > 0 && lastState() == italics {
-					compiled.WriteString("</em>")
-					remLastState()
-				} else {
-					compiled.WriteString("<em>")
-					pushState(italics)
-				}
-			
-			case blockChars["underline"]:
-				if len(openStates) > 0 && lastState() == underline {
-					compiled.WriteString("</u>")
-					remLastState()
-				} else {
-					compiled.WriteString("<u>")
-					pushState(underline)
-				}
-			
-			case blockChars["line"]:
-				if peek() == blockChars["line"] && peek2() == blockChars["line"] {
-					if len(openStates) == 0 {
-						next()
-						next()
-						ch = curr()
-						compiled.WriteString("<hr>")
-					} else {
-						compiled.WriteByte(ch)
-					}
-				} else {
-						compiled.WriteByte(ch)
-				}
-
-			case blockChars["newline"]:
-				if peek() == blockChars["newline"] {
-					next()
-					compiled.WriteString("<br>")
+					compiled.WriteString("<hr>")
 				} else {
 					compiled.WriteByte(ch)
 				}
+			} else {
+				compiled.WriteByte(ch)
+			}
 
-			case blockChars["heading"]:
-				hNum = 1
+		case blockChars["newline"]:
+			if peek() == blockChars["newline"] {
+				next()
+				compiled.WriteString("<br>")
+			} else {
+				compiled.WriteByte(ch)
+			}
+
+		case blockChars["heading"]:
+			hNum = 1
+			next()
+			ch = curr()
+			for ch == '#' {
+				hNum++
 				next()
 				ch = curr()
-				for ch == '#' {
-					hNum++
-					next()
-					ch = curr()
-					if hNum == 6 {
-						break
-					}
+				if hNum == 6 {
+					break
 				}
-				current--
-				peeked--
-				compiled.WriteString("<h" + strconv.Itoa(hNum) + ">")
-				pushState(heading)
+			}
+			current--
+			peeked--
+			compiled.WriteString("<h" + strconv.Itoa(hNum) + ">")
+			pushState(heading)
 
-			case '\n':
-				if len(openStates) > 0 && lastState() == heading {
-					remLastState()
-					compiled.WriteString("</h" + strconv.Itoa(hNum) + ">")
-					hNum = 0
-				} else if preserveNewLines {
-					compiled.WriteString("<br>")
-				} else {
-					compiled.WriteByte(ch)
-				}
-		
-			case blockChars["link"]:
-				next()
-				ch = curr()
-				if ch == '[' {
+		case '\n':
+			if len(openStates) > 0 && lastState() == heading {
+				remLastState()
+				compiled.WriteString("</h" + strconv.Itoa(hNum) + ">")
+				hNum = 0
+			} else if preserveNewLines {
+				compiled.WriteString("<br>")
+			} else {
+				compiled.WriteByte(ch)
+			}
+
+		case blockChars["link"]:
+			next()
+			ch = curr()
+			if ch == '[' {
 				compiled.WriteString("\n<a href=\"")
 				var url bytes.Buffer
 				var alt bytes.Buffer
@@ -245,8 +245,8 @@ func compile() string {
 				paropen := 0
 				for ch != ')' && current < len(source) {
 					if ch == '(' {
-							paropen++
-				}
+						paropen++
+					}
 					url.WriteByte(ch)
 					next()
 					ch = curr()
@@ -268,113 +268,113 @@ func compile() string {
 				}
 				compiled.WriteString("</a>\n")
 			}
-			
-			case blockChars["image"]: 
+
+		case blockChars["image"]:
+			next()
+			ch = curr()
+			if ch == '[' {
+				compiled.WriteString("\n<img src=\"")
+				var url bytes.Buffer
+				var alt bytes.Buffer
+				var w bytes.Buffer
+				var h bytes.Buffer
 				next()
 				ch = curr()
-				if ch == '[' {
-					compiled.WriteString("\n<img src=\"")
-					var url bytes.Buffer
-					var alt bytes.Buffer
-					var w bytes.Buffer
-					var h bytes.Buffer
-					next()
-					ch = curr()
-					for ch != ']' && current < len(source) {
-						if ch == ':' && peek() == ':' {
-							next()
-							next()
-							ch = curr()
-							for ch != ':' || peek() != ':' {
-								w.WriteByte(ch)
-								next()
-								ch = curr()
-							}
-							next()
-							next()
-							ch = curr()
-							for ch != ']' && current < len(source) {
-								h.WriteByte(ch)
-								next()
-								ch = curr()
-							}
-							break
-						}
-						alt.WriteByte(ch)
+				for ch != ']' && current < len(source) {
+					if ch == ':' && peek() == ':' {
+						next()
 						next()
 						ch = curr()
-					}
-					next()
-					ch = curr()
-					if ch != '(' {
-						fmt.Println("Improperly formatted image-link encountered.")
-						fmt.Println(string(ch))
-						os.Exit(1)
-					}
-					next()
-					ch = curr()
-					paropen := 0
-					for ch != ')' && current < len(source) {
-						if ch == '(' {
-							paropen++
+						for ch != ':' || peek() != ':' {
+							w.WriteByte(ch)
+							next()
+							ch = curr()
 						}
+						next()
+						next()
+						ch = curr()
+						for ch != ']' && current < len(source) {
+							h.WriteByte(ch)
+							next()
+							ch = curr()
+						}
+						break
+					}
+					alt.WriteByte(ch)
+					next()
+					ch = curr()
+				}
+				next()
+				ch = curr()
+				if ch != '(' {
+					fmt.Println("Improperly formatted image-link encountered.")
+					fmt.Println(string(ch))
+					os.Exit(1)
+				}
+				next()
+				ch = curr()
+				paropen := 0
+				for ch != ')' && current < len(source) {
+					if ch == '(' {
+						paropen++
+					}
+					url.WriteByte(ch)
+					next()
+					ch = curr()
+					for ch == ')' && paropen != 0 {
 						url.WriteByte(ch)
 						next()
 						ch = curr()
-						for ch == ')' && paropen != 0 {
-							url.WriteByte(ch)
-							next()
-							ch = curr()
-							paropen--
-						}
+						paropen--
 					}
-					next()
-					ch = curr()
-					compiled.WriteString(url.String())
-					compiled.WriteString("\" alt=\"")
-					if alt.String() == "" {
-						compiled.WriteString(url.String())
-					} else {
-						compiled.WriteString(alt.String())
-					}
-					compiled.WriteString("\"")
-					if w.String() != "" {
-						compiled.WriteString(" width=\"")
-						compiled.WriteString(w.String())
-						compiled.WriteByte('"')
-					}
-					if h.String() != "" {
-						compiled.WriteString(" height=\"")
-						compiled.WriteString(h.String())
-						compiled.WriteByte('"')
-					}
-					compiled.WriteString(">\n")
-				}			
-			
-			case blockChars["code"]:
+				}
 				next()
 				ch = curr()
-				compiled.WriteString("<pre>")
-				for ch != blockChars["code"] && current < len(source) {
-					if ch == blockChars["esc"] {
-						next()
-						ch = curr()	
-						compiled.WriteByte(ch)
-						next()
-						ch = curr()
-					}
+				compiled.WriteString(url.String())
+				compiled.WriteString("\" alt=\"")
+				if alt.String() == "" {
+					compiled.WriteString(url.String())
+				} else {
+					compiled.WriteString(alt.String())
+				}
+				compiled.WriteString("\"")
+				if w.String() != "" {
+					compiled.WriteString(" width=\"")
+					compiled.WriteString(w.String())
+					compiled.WriteByte('"')
+				}
+				if h.String() != "" {
+					compiled.WriteString(" height=\"")
+					compiled.WriteString(h.String())
+					compiled.WriteByte('"')
+				}
+				compiled.WriteString(">\n")
+			}
+
+		case blockChars["code"]:
+			next()
+			ch = curr()
+			compiled.WriteString("<pre>")
+			for ch != blockChars["code"] && current < len(source) {
+				if ch == blockChars["esc"] {
+					next()
+					ch = curr()
 					compiled.WriteByte(ch)
 					next()
 					ch = curr()
-					if ch == blockChars["code"] || current >= len(source) {
-						break
-					}
-					//ch = curr()
 				}
-				compiled.WriteString("</pre>")
-
-			default:
 				compiled.WriteByte(ch)
+				next()
+				ch = curr()
+				if ch == blockChars["code"] || current >= len(source) {
+					break
+				}
+				//ch = curr()
+			}
+			compiled.WriteString("</pre>")
+
+		default:
+			compiled.WriteByte(ch)
 
 		}
 	}
@@ -424,7 +424,6 @@ DESTINATION:
 	`)
 }
 
-
 func main() {
 	if len(os.Args) < 3 {
 		usage()
@@ -432,22 +431,22 @@ func main() {
 	}
 
 	/*
-	if os.Args[1] == "-n" {
-		preserveNewLines = true
-		optionGiven = true
-	} else if os.Args[1] == "-h" {
-		usage()
-		os.Exit(0)
-	} else if os.Args[1][0] == '-' {
-		fmt.Printf("Unknown option: %q", os.Args[1])
-		os.Exit(0)
-	}
-	if optionGiven {
-		if len(os.Args) != 4 {
+		if os.Args[1] == "-n" {
+			preserveNewLines = true
+			optionGiven = true
+		} else if os.Args[1] == "-h" {
 			usage()
 			os.Exit(0)
+		} else if os.Args[1][0] == '-' {
+			fmt.Printf("Unknown option: %q", os.Args[1])
+			os.Exit(0)
 		}
-	}
+		if optionGiven {
+			if len(os.Args) != 4 {
+				usage()
+				os.Exit(0)
+			}
+		}
 	*/
 
 	optionsGiven := false
@@ -457,7 +456,7 @@ func main() {
 	dst := 3
 	var htmlBeg string
 	var htmlend string
-	
+
 	if os.Args[1][:1] == "-" {
 		optionsGiven = true
 		options := os.Args[1][1:]
@@ -532,7 +531,7 @@ func main() {
 		}
 		source = string(scode)
 	}
-	
+
 	output := wrapBeg + compile() + wrapEnd
 
 	if html != 1 {
@@ -542,16 +541,16 @@ func main() {
 			return
 		}
 		htmlData := string(templateHTML)
-		htmlBeg = htmlData[: strings.Index(htmlData, "ent\">")+5]
-		htmlend = htmlData[strings.Index(htmlData, "ent\">")+5 :]
+		htmlBeg = htmlData[:strings.Index(htmlData, "ent\">")+5]
+		htmlend = htmlData[strings.Index(htmlData, "ent\">")+5:]
 	}
 
 	if css != 1 {
-		htmlBeg = htmlBeg[:strings.Index(htmlBeg, "href=\"")+6] + os.Args[css] + htmlBeg[strings.Index(htmlBeg, "href=\"")+6:] 
+		htmlBeg = htmlBeg[:strings.Index(htmlBeg, "href=\"")+6] + os.Args[css] + htmlBeg[strings.Index(htmlBeg, "href=\"")+6:]
 	}
 
 	if html != 1 {
-		output = htmlBeg + output + htmlend	
+		output = htmlBeg + output + htmlend
 	}
 
 	if os.Args[dst] == "out" {
