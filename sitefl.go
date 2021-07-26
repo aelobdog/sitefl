@@ -430,25 +430,6 @@ func main() {
 		os.Exit(0)
 	}
 
-	/*
-		if os.Args[1] == "-n" {
-			preserveNewLines = true
-			optionGiven = true
-		} else if os.Args[1] == "-h" {
-			usage()
-			os.Exit(0)
-		} else if os.Args[1][0] == '-' {
-			fmt.Printf("Unknown option: %q", os.Args[1])
-			os.Exit(0)
-		}
-		if optionGiven {
-			if len(os.Args) != 4 {
-				usage()
-				os.Exit(0)
-			}
-		}
-	*/
-
 	optionsGiven := false
 	html := 1
 	css := 1
@@ -558,5 +539,4 @@ func main() {
 	} else {
 		writeToFile(output, os.Args[dst])
 	}
-
 }
