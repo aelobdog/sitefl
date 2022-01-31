@@ -125,14 +125,8 @@ func compile() string {
 			ch = curr()
 			for ch != blockChars["escapeEnd"] && current < len(source) {
 				if ch == blockChars["esc"] {
-					//fmt.Print(string(ch))
 					next()
 					ch = curr()
-					//fmt.Println(string(ch))
-					//compiled.WriteByte(ch)
-					//next()
-					//ch = curr()
-					//fmt.Println(string(ch))
 				}
 				compiled.WriteByte(ch)
 				next()
@@ -223,7 +217,7 @@ func compile() string {
 			next()
 			ch = curr()
 			if ch == '[' {
-				compiled.WriteString("\n<a href=\"")
+				compiled.WriteString("<a href=\"")
 				var url bytes.Buffer
 				var alt bytes.Buffer
 				next()
@@ -236,8 +230,8 @@ func compile() string {
 				next()
 				ch = curr()
 				if ch != '(' {
-					fmt.Println("Improperly formatted link found.")
-					fmt.Println(string(ch))
+					println("Improperly formatted link found.")
+					println(string(ch))
 					os.Exit(1)
 				}
 				next()
@@ -257,8 +251,8 @@ func compile() string {
 						paropen--
 					}
 				}
-				next()
-				ch = curr()
+				// next()
+				// ch = curr()
 				compiled.WriteString(url.String())
 				compiled.WriteString("\">")
 				if alt.String() == "" {
@@ -266,7 +260,7 @@ func compile() string {
 				} else {
 					compiled.WriteString(alt.String())
 				}
-				compiled.WriteString("</a>\n")
+				compiled.WriteString("</a>")
 			}
 
 		case blockChars["image"]:
@@ -307,8 +301,8 @@ func compile() string {
 				next()
 				ch = curr()
 				if ch != '(' {
-					fmt.Println("Improperly formatted image-link encountered.")
-					fmt.Println(string(ch))
+					println("Improperly formatted image-link encountered.")
+					println(string(ch))
 					os.Exit(1)
 				}
 				next()
@@ -384,18 +378,18 @@ func compile() string {
 func writeToFile(content, filename string) {
 	f, err := os.Create(filename)
 	if err != nil {
-		fmt.Printf("Could not open file %q, exiting.", filename)
+		println("Could not open file, exiting.")
 		os.Exit(1)
 	}
 	defer f.Close()
 	_, err = f.WriteString(content)
 	if err != nil {
-		fmt.Printf("Could not write to file %q, exiting.", filename)
+		println("Could not write to file exiting.")
 	}
 }
 
 func usage() {
-	fmt.Println(`
+	println(`
 USAGE:
 ------
 	sitefl [-OPTIONS] [stylesheet, template] source destination
@@ -507,7 +501,7 @@ func main() {
 	} else {
 		scode, err := ioutil.ReadFile(os.Args[src])
 		if err != nil {
-			fmt.Printf("Could not read file named %q", os.Args[src])
+			println("Could not read file named", os.Args[src])
 			return
 		}
 		source = string(scode)
@@ -518,7 +512,7 @@ func main() {
 	if html != 1 {
 		templateHTML, err := ioutil.ReadFile(os.Args[html])
 		if err != nil {
-			fmt.Printf("Could not read file named %q", os.Args[html])
+			println("Could not read file named", os.Args[html])
 			return
 		}
 		htmlData := string(templateHTML)
@@ -535,7 +529,7 @@ func main() {
 	}
 
 	if os.Args[dst] == "out" {
-		fmt.Println(output)
+		println(output)
 	} else {
 		writeToFile(output, os.Args[dst])
 	}
