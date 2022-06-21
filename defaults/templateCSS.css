@@ -1,57 +1,85 @@
-@import url('https://fonts.googleapis.com/css2?family=Alata&family=IBM+Plex+Mono:wght@400&family=Roboto:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata&family=Inter:wght@300&display=swap');
 
 * {
-	margin: 0;
+   margin: 0;
 }
 
 body {
-	margin: 0;
-	width: 100%;
-	height: 100%;
-	margin-bottom: 50px;
+   margin: 0;
+   width: 100%;
+   height: 100%;
+   margin-bottom: 50px;
+   background-color: #fefefe;
 }
 
 .content {
-	width: 70%;
-	margin-top: 50px;
-	margin-left: auto;
-	margin-right: auto;
-	font-family: 'Roboto', sans-serif;
-	line-height: 1.2;
-	text-align: justify;
-	color: #434343;
+   width: 45%;
+   margin-top: 50px;
+   margin-left: auto;
+   margin-right: auto;
+   /* font-family: 'Ubuntu Mono', monospace; */
+   font-family: 'Inter', sans-serif;
+   /* font-size: 1.2em; */
+   line-height: 1.2;
+   text-align: justify;
+   color: #555;
 }
 
-h1, h2, h3{
-	padding: 15px;
-	padding-left: 0;
-	font-weight: 300;
-	font-family: 'Alata', sans-serif;
+h1, h2, h3 {
+   padding: 15px;
+   padding-left: 0;
+   font-weight: 300;
+   /* font-family: 'IBM Plex Mono', monospace; */
+   font-family: 'Inter', sans-serif;
+   color: #0C213C;
 }
 
 h4, h5, h6 {
-	padding: 8px;
-	padding-left: 0;
-	font-weight: normal;
-	font-family: 'Alata', serif;
+   padding: 8px;
+   padding-left: 0;
+   font-weight: normal;
+   font-family: 'Inter', sans-serif;
+   color: #0C213C;
 }
 
 pre {
-	color: #777;
-	display: inline-block;
-	width: 100%;
-	font-family: 'IBM Plex Mono', monospace;
-	padding: 10px;
-	background-color: #eee;
-	overflow-x: auto;
-  white-space: pre-wrap;
-  white-space: -moz-pre-wrap;
-  white-space: -pre-wrap;
-  white-space: -o-pre-wrap;
-  word-wrap: break-word;
-	text-align: left;
+   background-color: #3E434D;
+   color: #eee;
+   display: inline-block;
+   width: 100%;
+   font-family: 'Inconsolata', monospace;
+   padding: 10px;
+   overflow-x: auto;
+   white-space: pre-wrap;
+   white-space: -moz-pre-wrap;
+   white-space: -pre-wrap;
+   text-align: left;
+   white-space: -o-pre-wrap;
+   word-wrap: break-word;
 }
 
 hr {
-	width: 70%;
+    border: 0;
+    margin-top: 1px;
+    height: 3px;
+    background-image: linear-gradient(to right, rgba(100, 100, 100, 1), rgba(240, 240, 240, 1.0));
+}
+
+a {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    color: #0049aa;
+}
+
+a:hover {
+    background-color: #0049aa;
+    color: #eee;
+}
+
+@media only screen and (max-width: 768px) {
+   .content {
+      width: 90%;
+   }
 }

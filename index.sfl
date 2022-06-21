@@ -1,0 +1,59 @@
+#SiTeFL
+###The _Si_mple _Te_xt _F_ormatting _L_anguage
+SiTeFL is a text formatting language like Markdown, with a /text-to-html/ tool written from scratch in Go.
+
+###Syntax:
+`
+Headings    :   # (1 -> 6) 
+
+Bold        :   *bold*
+
+Italics     :   /italics/
+
+Underline   :   _underline_
+
+Code        :   \`this is code\`
+
+Images      :   ![Alt-text::width::height](link to image)
+
+Link        :   @[Display-text](link url)
+
+NewLine     :   ;;
+
+Horizontal  :   ---
+
+Escape
+Formatting  :   { *not bold* will not appear as bold ! }
+(BLOCK)
+
+Escape
+Single      :   \\
+Character
+`
+
+###Usage:
+`
+sitefl [-OPTIONS] [stylesheet, template] source destination
+`
+
+###Options:
+`::options`
+###Source:
+`
+filename : file to obtain input from
+'in' : get input from stdin
+
+(enables : grep -o "something" | sitefl in DESTINATION )
+`					
+###Destination:
+`
+filename : file to send output to
+'out' : send output to stdout
+
+(enables : sitefl SOURCE out | grep "something" )
+`
+###Example:
+`
+sitefl -nts defaults/templateHTML.html defaults/templateCSS.css index.stfl index.html
+`
+( This is the actual command that I'm using to generate this page )

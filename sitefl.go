@@ -1,7 +1,7 @@
 /*
 	MIT License
 
-	Copyright (c) 2020 Ashwin Godbole
+	Copyright (c) 2020-2022 Ashwin Godbole
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -349,22 +349,70 @@ func compile() string {
 			next()
 			ch = curr()
 			compiled.WriteString("<pre>")
-			for ch != blockChars["code"] && current < len(source) {
-				if ch == blockChars["esc"] {
+
+            // if the code block looks like `::filename`, then read the contents of the file
+            // and use that as the source
+            if ch == ':' && peek() == ':' {
+                next()
+                next()
+                start := current
+                end := current
+                for ch != blockChars["code"] && current < len(source) {
+                    end ++
 					next()
 					ch = curr()
-					compiled.WriteByte(ch)
-					next()
-					ch = curr()
-				}
-				compiled.WriteByte(ch)
-				next()
-				ch = curr()
-				if ch == blockChars["code"] || current >= len(source) {
-					break
-				}
-				//ch = curr()
-			}
+                }
+                filename := source[start:end]
+                file, err := os.Open(filename)
+                if err != nil {
+                    fmt.Println("error: unable to open file '", filename, "'")
+                }
+                defer file.Close()
+                scanner := bufio.NewScanner(file)
+                lineno := 1
+                for scanner.Scan() {
+                    display := fmt.Sprintf("%3d| %s\n", lineno, scanner.Text())
+                    compiled.WriteString(display)
+                    lineno ++
+                }
+            } else {
+                ch = curr()
+                lineno := 1
+                number := fmt.Sprintf("%3d| ", lineno)
+                if ch == '\n' {
+                    lineno --
+                } else {
+                    compiled.WriteString(number)
+                }
+                for ch != blockChars["code"] && current < len(source) {
+                    if ch == '\n' {
+                        if peek() == blockChars["code"] {
+                            next()
+                            ch = curr()
+                            break
+                        }
+
+                        lineno++
+                        number = fmt.Sprintf("\n%3d| ", lineno)
+                        compiled.WriteString(number)
+                        next()
+                        ch = curr()
+
+                    } else {
+                        if ch == '\\' && peek() == blockChars["code"] {
+                            next()
+                            ch = curr()
+                        }
+                        compiled.WriteByte(ch)
+                        next()
+                        ch = curr()
+                    }
+
+                    if ch == blockChars["code"] || current >= len(source) {
+                        break
+                    }
+                }
+            }
 			compiled.WriteString("</pre>")
 
 		default:
