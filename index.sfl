@@ -1,59 +1,42 @@
-#SiTeFL
-###The _Si_mple _Te_xt _F_ormatting _L_anguage
-SiTeFL is a text formatting language like Markdown, with a /text-to-html/ tool written from scratch in Go.
+#1 SiTeFL
+#2 The *Si*mple *Te*xt *F*ormatting *L*anguage
 
-###Syntax:
+Like Markdown, but with a /text-to-html/  tool written from scratch in Go.
+
+#3 Syntax:
 `
-Headings    :   # (1 -> 6) 
+Headings : #1 #2 #3 #4 #5 #6
 
-Bold        :   *bold*
+Bold : \*bold\*
 
-Italics     :   /italics/
+Italics : \/italics\/
 
-Underline   :   _underline_
+Underline : \_underline\_
 
-Code        :   \`this is code\`
+Code : \`this is code\` or \`::file\`
 
-Images      :   ![Alt-text::width::height](link to image)
+Images : ![Alt-text::width::height](link to image)
 
-Link        :   @[Display-text](link url)
+Link : @[Display-text](link url)
 
-NewLine     :   ;;
+NewLine : ;;
 
-Horizontal  :   ---
+Horizontal : ---
 
-Escape
-Formatting  :   { *not bold* will not appear as bold ! }
-(BLOCK)
+Escape Single Character : \\
 
-Escape
-Single      :   \\
-Character
+List : +
 `
 
-###Usage:
+#3 Usage:
 `
-sitefl [-OPTIONS] [stylesheet, template] source destination
+sitefl input.sfl output.html [templateHTML.html] [stylesheet.css] [true/false]
+
+the true/false is to decide whether to preserve new lines or not
 `
 
-###Options:
-`::options`
-###Source:
+#3 Example:
 `
-filename : file to obtain input from
-'in' : get input from stdin
-
-(enables : grep -o "something" | sitefl in DESTINATION )
-`					
-###Destination:
-`
-filename : file to send output to
-'out' : send output to stdout
-
-(enables : sitefl SOURCE out | grep "something" )
-`
-###Example:
-`
-sitefl -nts defaults/templateHTML.html defaults/templateCSS.css index.stfl index.html
+sitefl index.sfl index.html defaults/templateHTML.html defaults/templateCSS.css
 `
 ( This is the actual command that I'm using to generate this page )

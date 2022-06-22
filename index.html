@@ -6,47 +6,58 @@
 		<link rel="stylesheet" href="defaults/templateCSS.css">
 	</head>
 	<body>
-		<div class="content"><h1>SiTeFL</h1><h3>The <u>Si</u>mple <u>Te</u>xt <u>F</u>ormatting <u>L</u>anguage</h3>SiTeFL is a text formatting language like Markdown, with a <em>text-to-html</em> tool written from scratch in Go.<br><br><h3>Syntax:</h3><pre>
-  1| Headings    :   # (1 -> 6) 
+		<div class="content"><h1> SiTeFL</h1>
+<h2> The <b>Si</b>mple <b>Te</b>xt <b>F</b>ormatting <b>L</b>anguage</h2>
+<br>
+
+Like Markdown, but with a <i>text-to-html</i>  tool written from scratch in Go.<br>
+
+<br>
+
+<h3> Syntax:</h3>
+<pre>
+  1| Headings : #1 #2 #3 #4 #5 #6
   2| 
-  3| Bold        :   *bold*
+  3| Bold : \*bold\*
   4| 
-  5| Italics     :   /italics/
+  5| Italics : \/italics\/
   6| 
-  7| Underline   :   _underline_
+  7| Underline : \_underline\_
   8| 
-  9| Code        :   `this is code`
+  9| Code : `this is code` or `::file`
  10| 
- 11| Images      :   ![Alt-text::width::height](link to image)
+ 11| Images : ![Alt-text::width::height](link to image)
  12| 
- 13| Link        :   @[Display-text](link url)
+ 13| Link : @[Display-text](link url)
  14| 
- 15| NewLine     :   ;;
+ 15| NewLine : ;;
  16| 
- 17| Horizontal  :   ---
+ 17| Horizontal : ---
  18| 
- 19| Escape
- 20| Formatting  :   { *not bold* will not appear as bold ! }
- 21| (BLOCK)
- 22| 
- 23| Escape
- 24| Single      :   \\
- 25| Character</pre><br><br><h3>Usage:</h3><pre>
-  1| sitefl [-OPTIONS] [stylesheet, template] source destination</pre><br><br><h3>Options:</h3><pre>  1| f : Prints this message
-  2| n : Preserves new lines
-  3| s : attach Stylesheet
-  4| t : use template
-  5| w : wrap the output within a div (id = 'unit')
-</pre><br><h3>Source:</h3><pre>
-  1| filename : file to obtain input from
-  2| 'in' : get input from stdin
-  3| 
-  4| (enables : grep -o "something" | sitefl in DESTINATION )</pre>					<br><h3>Destination:</h3><pre>
-  1| filename : file to send output to
-  2| 'out' : send output to stdout
-  3| 
-  4| (enables : sitefl SOURCE out | grep "something" )</pre><br><h3>Example:</h3><pre>
-  1| sitefl -nts defaults/templateHTML.html defaults/templateCSS.css index.stfl index.html</pre><br>( This is the actual command that I'm using to generate this page )<br>
+ 19| Escape Single Character : \\
+ 20| 
+ 21| List : +</pre>
+<br>
+
+<br>
+
+<h3> Usage:</h3>
+<pre>
+  1| sitefl input.sfl output.html [templateHTML.html] [stylesheet.css] [true/false]
+  2| 
+  3| the true/false is to decide whether to preserve new lines or not</pre>
+<br>
+
+<br>
+
+<h3> Example:</h3>
+<pre>
+  1| sitefl index.sfl index.html defaults/templateHTML.html defaults/templateCSS.css</pre>
+<br>
+
+( This is the actual command that I'm using to generate this page )<br>
+
+
 		</div>
 	</body>
 </html>
